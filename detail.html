@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<title>精灵详情</title>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<style>
+  html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont;background:#0e0e17;color:#fff}
+  .detail-box{max-width:480px;margin:40px auto;padding:16px}
+  .detail-box img{width:100%;border-radius:12px}
+  .detail-box h1{color:#00f5d4;margin:12px 0 6px}
+  .detail-box p{margin:4px 0;font-size:14px;color:#c7b8ff}
+  .back-btn{display:inline-block;margin-top:20px;padding:8px 16px;background:#00f5d4;color:#0e0e17;border-radius:6px;text-decoration:none}
+  .skill-blue{background:#3498db;color:#fff;}
+  .skill-yellow{background:#f1c40f;color:#000;}
+  /* 属性徽章 */
+    .attr-badge {
+      display:inline-block;
+      padding:4px 10px;
+      margin-right:6px;
+      border-radius:12px;
+      font-size:13px;
+      font-weight:bold;
+      color:#fff;
+    }
+    
+    .skill-blue,
+    .skill-yellow{
+      padding:2px 6px;
+      border-radius:4px;
+      font-size:13px;
+      margin-right:4px;
+    }
+    
+    .skill-ul{list-style:none;margin:0;padding:0;}
+    .skill-li{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px 8px;
+      padding:8px;
+      margin:4px 0;
+      border-radius:8px;
+      font-size:13px;
+    }
+    .skill-li.up   {background:#3498db;color:#fff;}
+    .skill-li.set  {background:#FCF7E5;color:#000;}
+    
+    .skill-li > span{
+      padding:2px 6px;
+      border-radius:4px;
+      white-space:nowrap;
+    }
+    .skill-name{font-weight:bold;}
+    .skill-element{font-weight:bold;min-width:32px;text-align:center;}
+    .skill-type{background:#444;color:#fff;}
+    .skill-power{background:#e55039;color:#fff;}
+    .skill-acc{background:#78e08f;color:#000;}
+    .skill-mp{background:#a55eea;color:#fff;}
+    .skill-desc{flex:1 1 100%;margin-top:4px;font-size:12px;color:#c7b8ff;}
+    
+    .description-card {
+      background-color: #181818;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .description-card h3 {
+      color: #00f5d4;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .description-card p {
+      margin: 0;
+      color: #c7b8ff;
+    }
+  
+    .type-card {
+      background-color: #181818;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .type-card h3 {
+      color: #00f5d4;
+      margin-top: 0;
+      margin-bottom: 8px;
+    }
+    .type-card p {
+      margin: 0;
+      color: #c7b8ff;
+    }
+/* 在 detail.html 的 style 中 */
+    .stats-card {
+      background-color: #181818;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    
+    .stats-card h3 {
+      color: #00f5d4;
+      margin-top: 0;
+      margin-bottom: 16px;
+    }
+    
+    .stats-summary {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      background-color: #222;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    
+    .stat-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .stat-name {
+      width: 100px;
+      color: #c7b8ff;
+    }
+    
+    .stat-bar {
+      flex: 1;
+      height: 12px;
+      background-color: #222;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 0 12px;
+    }
+    
+    .stat-value {
+      height: 100%;
+      border-radius: 6px;
+    }
+    
+    #stat-hp { background-color: #ff5252; }
+    #stat-atk { background-color: #ff9800; }
+    #stat-def { background-color: #ffc107; }
+    #stat-spa { background-color: #4caf50; }
+    #stat-spd { background-color: #2196f3; }
+    #stat-spe { background-color: #9c27b0; }
+    
+    .stat-number {
+      width: 40px;
+      text-align: right;
+      color: #c7b8ff;
+    }
+
+    
+
+    /* 属性配色 */
+    .attr-normal{background:#95a5a6;}
+    .attr-grass {background:#78e08f;}
+    .attr-water {background:#4a90e2;}
+    .attr-fire  {background:#e55039;}
+    .attr-wind {background:#DAE7E8;}
+    .attr-poison{background:#a55eea;}
+    .attr-bug{background:#BACF65;}
+    .attr-fly{background:#A2A9C6;}
+    .attr-electric{background:#E4BF11;}
+    .attr-ground{background:#A17C3F;}
+    .attr-ice{background:#B3E5E8;}
+    .attr-SP{background:#A04D9F;}
+    .attr-tatakai{background:#991B11;}
+    .attr-special{background:#173067;}
+    .attr-light{background:#FEF2C6;}
+    .attr-mystery{background:#5E2C61;}
+    .attr-dark{background:#000000;}
+    .attr-loong{background:#EC4C76;}
+    .attr-desert{background:#C09351;}
+    .attr-HG{background:#5DB3F5;}
+    .attr-king{background:#FFBB1A;}
+    .attr-paraeold{background:#E5B751;}
+    .attr-steel{background:#7F9099;}
+    
+</style>
+</head>
+<body>
+<div id="debug"></div>
+<div class="detail-box">
+  <img id="d-img" src="" alt="">
+  <h1 id="d-name"></h1>
+  <div class="type-card">
+    <h3>系别</h3>
+    <p id="d-type"></p>
+  </div>
+  <div class="description-card">
+    <h3>描述</h3>
+    <p id="d-desc"></p>
+  </div>
+  <!-- 新增种族值卡片 -->
+  <div class="stats-card">
+    <h3>种族值</h3>
+    <div class="stats-summary">
+      <span>种族值总和</span>
+      <span id="total-stats">0</span>
+    </div>
+    <div class="stats-list">
+      <div class="stat-item">
+        <span class="stat-name">HP</span>
+        <div class="stat-bar">
+          <div class="stat-value" id="stat-hp"></div>
+        </div>
+        <span class="stat-number" id="num-hp">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-name">攻击</span>
+        <div class="stat-bar">
+          <div class="stat-value" id="stat-atk"></div>
+        </div>
+        <span class="stat-number" id="num-atk">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-name">防御</span>
+        <div class="stat-bar">
+          <div class="stat-value" id="stat-def"></div>
+        </div>
+        <span class="stat-number" id="num-def">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-name">特攻</span>
+        <div class="stat-bar">
+          <div class="stat-value" id="stat-spa"></div>
+        </div>
+        <span class="stat-number" id="num-spa">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-name">特防</span>
+        <div class="stat-bar">
+          <div class="stat-value" id="stat-spd"></div>
+        </div>
+        <span class="stat-number" id="num-spd">0</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-name">速度</span>
+        <div class="stat-bar">
+          <div class="stat-value" id="stat-spe"></div>
+        </div>
+        <span class="stat-number" id="num-spe">0</span>
+      </div>
+    </div>
+  </div>
+  <!-- 技能列表 -->
+    <div class="skill-list">
+      <h3 style="color:#00f5d4;margin:16px 0 4px">升级技能</h3>
+      <ul id="up-list" class="skill-ul"></ul>
+    
+      <h3 style="color:#f1c40f;margin:16px 0 4px">其他技能</h3>
+      <ul id="set-list" class="skill-ul"></ul>
+    </div>
+
+
+<!-- 1. 引入详情数据 -->
+<script src="petdex/info.js"></script>
+<!-- 技能映射表 -->
+<script src="petdex/skill.js"></script>
+<script>
+/* 渲染技能列表 */
+// 升级技能（带等级）
+function renderUpSkill(ids, container) {
+  container.innerHTML = '';
+  const info = window.petInfo[id]; // 确保这里的 id 是正确的
+  ids.forEach(skillId => {
+    const lv = info.skillLv[skillId] ?? '—'; // 使用默认值 '—' 而不是 '?'
+    const sk = window.skillMap[skillId];
+    const li = document.createElement('li');
+   li.className = 'skill-li up';
+   li.innerHTML = `
+      <span class="skill-name">${sk.name}</span>
+      <span class="skill-element">${sk.element}</span>
+      <span class="skill-type">${sk.type}</span>
+      <span class="skill-power">${sk.power || '—'}</span>
+      <span class="skill-acc">${sk.acc}%</span>
+      <span class="skill-mp">${sk.mp}怒</span>
+      <span class="skill-desc">${sk.detail}</span>
+      <span class="skill-lv">Lv.${lv}</span>
+    `;
+   container.appendChild(li);
+  });
+}
+
+
+// 设定技能（不带等级）
+function renderSetSkill(ids, container) {
+  container.innerHTML = '';
+  ids.forEach(id => {
+    const sk = window.skillMap[id];
+    const li = document.createElement('li');
+    li.className = 'skill-li set';
+    li.innerHTML = `
+      <span class="skill-name">${sk.name}</span>
+      <span class="skill-element">${sk.element}</span>
+      <span class="skill-type">${sk.type}</span>
+      <span class="skill-power">${sk.power || '—'}</span>
+      <span class="skill-acc">${sk.acc}%</span>
+      <span class="skill-mp">${sk.mp}怒</span>
+      <span class="skill-desc">${sk.detail}</span>
+    `;
+    container.appendChild(li);
+  });
+}
+
+/* 主渲染 */
+const id   = new URLSearchParams(location.search).get('id');
+const info = window.petInfo[id];
+if(info){
+  document.getElementById('d-img').src   = info.img;
+  document.getElementById('d-name').textContent = info.name;
+  document.getElementById('d-desc').textContent = info.desc;
+
+  /* 属性徽章（保持） */
+  const typeBox = document.getElementById('d-type');
+  typeBox.innerHTML = '';
+  info.type.split('/').forEach(t=>{
+      const map = {水:'water',火:'fire',草:'grass',毒:'poison',普通:'normal',风:'wind',虫:"bug",飞行:"fly",电:"electric",地面:"ground",冰:"ice",超能:"SP",战斗:"tatakai", 特质:"special", 光:"light", 神秘:"mystery", 暗影:"dark", 龙:"loong", 沙漠:"desert", 圣灵:"HG", 精灵王:"king", 上古:"paraeold", 机械:"steel"};
+      const cls = map[t.trim()] || 'normal';
+      typeBox.insertAdjacentHTML('beforeend', `<span class="attr-badge attr-${cls}">${t}</span>`);
+  });
+
+  /* 技能列表 */
+  renderUpSkill(info.upskill,  document.getElementById('up-list'));
+  renderSetSkill(info.setskill, document.getElementById('set-list'));
+
+  // 渲染种族值
+  const statsStr = info.stats.split('/');
+  const statsNames = ['atk', 'spa', 'def', 'spd', 'spe', 'hp'];
+  const colors = ['#ff9800', '#4caf50', '#ffc107', '#2196f3', '#9c27b0', '#ff5252'];
+  let totalStats = 0;
+
+  statsNames.forEach((stat, index) => {
+    const value = parseInt(statsStr[index]);
+    totalStats += value;
+
+    // 更新数值显示
+    document.getElementById(`num-${stat}`).textContent = value;
+
+    // 更新进度条
+    const statElement = document.getElementById(`stat-${stat}`);
+    statElement.style.width = `${(value / 255) * 100}%`;
+    statElement.style.backgroundColor = colors[index];
+  });
+
+  // 更新总和
+  document.getElementById('total-stats').textContent = totalStats;
+}else{
+  document.body.innerHTML = '<h1 style="text-align:center;margin-top:100px">找不到精灵信息</h1>';
+}
+</script>
+</body>
+</html>
