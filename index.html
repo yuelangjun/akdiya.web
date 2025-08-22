@@ -103,6 +103,40 @@
   .dex-card img{width:100%;border-radius:4px}
   .dex-card h4{margin:6px 0 4px;font-size:14px;color:#00f5d4}
   .dex-card p{font-size:12px;color:#c7b8ff}
+  
+  .more-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+      gap:16px;
+    }
+    .more-card{
+      background:#222;
+      border-radius:12px;
+      padding:12px;
+      text-align:center;
+      color:#fff;
+      text-decoration:none;
+    }
+    .more-card img{
+      width:48px;height:48px;margin-bottom:8px;border-radius:8px;
+    }
+    
+    .filter-bar{
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    .filter-bar input, .filter-bar select{
+      flex:1;
+      padding:6px 8px;
+      border-radius:6px;
+      border:1px solid #444;
+      background:#111;
+      color:#c7b8ff;
+      font-size:13px;
+    }
+
 
 </style>
 </head>
@@ -149,16 +183,46 @@
       <h2>图鉴</h2>
       <div class="dex-tabs">
         <button id="tab-pokemon" class="dex-tab active">精灵图鉴</button>
-        <button id="tab-item"     class="dex-tab">道具图鉴</button>
+        <button id="tab-item" class="dex-tab">道具图鉴</button>
       </div>
-      <div id="dex-list" class="dex-grid">读取中……</div>
+    
+      <!-- 精灵图鉴：带搜索 -->
+      <div id="pokemon-panel">
+      <div class="filter-bar">
+        <input id="searchInput" type="text" placeholder="输入ID或名字" />
+        <select id="filterAttr">
+          <option value="">所有属性</option>
+          <option value="普通">普通</option><option value="草">草</option><option value="水">水</option><option value="火">火</option><option value="风">风</option><option value="虫">虫</option><option value="飞行">飞行</option><option value="电">电</option><option value="地面">地面</option><option value="冰">冰</option><option value="超能">超能</option><option value="战斗">战斗</option><option value="特质">特质</option><option value="光">光</option><option value="神秘">神秘</option><option value="暗影">暗影</option><option value="龙">龙</option><option value="沙漠">沙漠</option><option value="圣灵">圣灵</option><option value="精灵王">精灵王</option><option value="上古">上古</option><option value="机械">机械</option>
+        </select>
+        <input id="minId" type="number" placeholder="起始ID" min="1" style="width:70px"/>
+        <input id="maxId" type="number" placeholder="结束ID" min="1" style="width:70px"/>
+      </div>
+      <ul id="pokemon-list" class="dex-grid"></ul>
+    </div>
+    
+    
+      <!-- 道具图鉴：无搜索 -->
+      <div id="item-panel" class="tab-content" style="display:none;">
+        <ul id="item-list" class="dex-grid"></ul>
+      </div>
     </div>
 
 
-    <!-- 论坛 -->
+
+
+    <!-- 更多功能 -->
     <div id="forum" class="panel">
-      <h2>论坛</h2>
-      <p>敬请期待</p>
+      <h2>更多功能</h2>
+      <div class="more-grid">
+        <a class="more-card" href="https://github.com/Brady29655751/Seer2-Restart-Lite" target="_blank">
+          <img src="img/github.png" alt="开源仓库">
+          <span>开源仓库</span>
+        </a>
+        <a class="more-card" href="3296471879@qq.com">
+          <img src="img/mail.png" alt="问题反馈">
+          <span>问题反馈</span>
+        </a>
+      </div>
     </div>
   </main>
 
@@ -167,7 +231,7 @@
     <button data-target="home"  class="tab-btn active">主页</button>
     <button data-target="guide" class="tab-btn">攻略</button>
     <button data-target="pokedex" class="tab-btn">图鉴</button>
-    <button data-target="forum"  class="tab-btn">论坛</button>
+    <button data-target="forum" class="tab-btn">更多功能</button>
   </nav>
 
   <!-- 切换脚本 -->
@@ -211,18 +275,41 @@
       }
     });
     
-    /* 顶部切换按钮 */
-    document.getElementById('tab-pokemon').addEventListener('click', ()=>{
-      document.querySelectorAll('.dex-tab').forEach(t=>t.classList.remove('active'));
-      document.getElementById('tab-pokemon').classList.add('active');
-      renderList(window.petData, listBox);
-    });
+/* 渲染精灵（带过滤） */
+function renderPetFiltered(){
+  const attr= document.getElementById('filterAttr').value;
+    const kw  = document.getElementById('searchInput').value.trim();
+    const min = parseInt(document.getElementById('minId').value) || 0;
+    const max = parseInt(document.getElementById('maxId').value) || 9999999;
     
-    document.getElementById('tab-item').addEventListener('click', ()=>{
-      document.querySelectorAll('.dex-tab').forEach(t=>t.classList.remove('active'));
-      document.getElementById('tab-item').classList.add('active');
-      renderList(window.itemData, listBox);
+    const list = window.petData.filter(p=>{
+      const matchKey   = kw==='' || p.id.toString().includes(kw) || p.name.toLowerCase().includes(kw.toLowerCase());
+      const matchAttr  = attr==='' || p.type.includes(attr);
+      const matchRange = p.id >= min && p.id <= max;
+      return matchKey && matchAttr && matchRange;
     });
+  renderList(list, document.getElementById('pokemon-list'));
+}
+
+/* 面板切换 */
+function switchPanel(type){
+  document.getElementById('pokemon-panel').style.display = type==='pokemon'?'block':'none';
+  document.getElementById('item-panel').style.display     = type==='item'?'block':'none';
+  if(type==='pokemon') renderPetFiltered();
+  if(type==='item')    renderList(window.itemData, document.getElementById('item-list'));
+}
+
+/* 绑定事件 */
+document.getElementById('tab-pokemon').addEventListener('click', ()=>switchPanel('pokemon'));
+document.getElementById('tab-item').addEventListener('click', ()=>switchPanel('item'));
+['input','change'].forEach(evt=>{
+  ['searchInput','filterAttr','minId','maxId'].forEach(id=>{
+    document.getElementById(id).addEventListener(evt, renderPetFiltered);
+  });
+});
+
+// 首次加载
+switchPanel('pokemon');
 
   </script>
 </body>

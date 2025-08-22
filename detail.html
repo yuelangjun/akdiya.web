@@ -36,12 +36,14 @@
     .skill-li{
       display:flex;
       flex-wrap:wrap;
-      gap:4px 8px;
+      gap:2px 4px;
       padding:8px;
       margin:4px 0;
       border-radius:8px;
       font-size:13px;
+      min-width:0;            /* 关键：防止溢出 */
     }
+
     .skill-li.up   {background:#3498db;color:#fff;}
     .skill-li.set  {background:#FCF7E5;color:#000;}
     
@@ -56,7 +58,17 @@
     .skill-power{background:#e55039;color:#fff;}
     .skill-acc{background:#78e08f;color:#000;}
     .skill-mp{background:#a55eea;color:#fff;}
-    .skill-desc{flex:1 1 100%;margin-top:4px;font-size:12px;color:#c7b8ff;}
+    .skill-desc{
+      display:block;
+      width:100%;
+      font-size:12px;
+      line-height:1.4;
+      color:#c7b8ff;
+      white-space:normal;      /* 允许自动换行 */
+      word-break:break-word;
+    }
+
+
     
     .description-card {
       background-color: #181818;
@@ -271,12 +283,12 @@ function renderUpSkill(ids, container) {
    li.className = 'skill-li up';
    li.innerHTML = `
       <span class="skill-name">${sk.name}</span>
-      <span class="skill-element">${sk.element}</span>
+      <span class="attr-badge attr-${elementmap[sk.element]}">${sk.element}</span>
       <span class="skill-type">${sk.type}</span>
       <span class="skill-power">${sk.power || '—'}</span>
       <span class="skill-acc">${sk.acc}%</span>
       <span class="skill-mp">${sk.mp}怒</span>
-      <span class="skill-desc">${sk.detail}</span>
+      <div class="skill-desc">${sk.detail}</div>
       <span class="skill-lv">Lv.${lv}</span>
     `;
    container.appendChild(li);
@@ -293,18 +305,19 @@ function renderSetSkill(ids, container) {
     li.className = 'skill-li set';
     li.innerHTML = `
       <span class="skill-name">${sk.name}</span>
-      <span class="skill-element">${sk.element}</span>
+      <span class="attr-badge attr-${elementmap[sk.element]}">${sk.element}</span>
       <span class="skill-type">${sk.type}</span>
       <span class="skill-power">${sk.power || '—'}</span>
       <span class="skill-acc">${sk.acc}%</span>
       <span class="skill-mp">${sk.mp}怒</span>
-      <span class="skill-desc">${sk.detail}</span>
+      <div class="skill-desc">${sk.detail}</div>
     `;
     container.appendChild(li);
   });
 }
 
 /* 主渲染 */
+const elementmap = {水:'water',火:'fire',草:'grass',毒:'poison',普通:'normal',风:'wind',虫:"bug",飞行:"fly",电:"electric",地面:"ground",冰:"ice",超能:"SP",战斗:"tatakai", 特质:"special", 光:"light", 神秘:"mystery", 暗影:"dark", 龙:"loong", 沙漠:"desert", 圣灵:"HG", 精灵王:"king", 上古:"paraeold", 机械:"steel"};
 const id   = new URLSearchParams(location.search).get('id');
 const info = window.petInfo[id];
 if(info){
@@ -316,8 +329,7 @@ if(info){
   const typeBox = document.getElementById('d-type');
   typeBox.innerHTML = '';
   info.type.split('/').forEach(t=>{
-      const map = {水:'water',火:'fire',草:'grass',毒:'poison',普通:'normal',风:'wind',虫:"bug",飞行:"fly",电:"electric",地面:"ground",冰:"ice",超能:"SP",战斗:"tatakai", 特质:"special", 光:"light", 神秘:"mystery", 暗影:"dark", 龙:"loong", 沙漠:"desert", 圣灵:"HG", 精灵王:"king", 上古:"paraeold", 机械:"steel"};
-      const cls = map[t.trim()] || 'normal';
+      const cls = elementmap[t.trim()] || 'normal';
       typeBox.insertAdjacentHTML('beforeend', `<span class="attr-badge attr-${cls}">${t}</span>`);
   });
 
